@@ -31,7 +31,7 @@ ENV LD_LIBRARY_PATH="/opt/R/lib/R/lib:${LD_LIBRARY_PATH}"
 RUN Rscript -e "update.packages(ask=FALSE, repos='https://ftp.gwdg.de/pub/misc/cran/')"
 RUN Rscript -e "install.packages(c('devtools', 'gam', 'RColorBrewer', 'BiocManager', 'IRkernel'), repos='https://ftp.gwdg.de/pub/misc/cran/')"
 RUN Rscript -e "devtools::install_github(c('patzaw/neo2R', 'patzaw/BED'))"
-RUN Rscript -e "BiocManager::install(c('scran','MAST','monocle','ComplexHeatmap','limma','slingshot','clusterExperiment','DropletUtils'), version = '3.10')"
+RUN Rscript -e "BiocManager::install(c('scran','MAST','monocle','ComplexHeatmap','limma','slingshot','clusterExperiment','DropletUtils', 'CellMix'), version = '3.10')"
 RUN Rscript -e 'writeLines(capture.output(sessionInfo()), "../package_versions_r.txt")' --default-packages=scran,RColorBrewer,slingshot,monocle,gam,clusterExperiment,ggplot2,plyr,MAST,DropletUtils,IRkernel
 
 
