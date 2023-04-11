@@ -5,7 +5,7 @@ Following up on my application for QDI's [Senior Bioinformatics Scientist](https
 
 You may be familiar with computation tools used to estimate the proportion of cell types that contributed to a bulk mRNA-seq sample. These tools usually rely on data enriched for a particular cell type or identification of cell type specific gene expression patterns from single cell mRNA-seq data. There are a number of tools available to deconvolute bulk mRNA-seq data, and I've been wondering which methods work the best and if the ratio of cells present in a mixture affects the accuracy of any deconvolution approach. Existing literature on [this topic](https://www.nature.com/articles/s41467-020-19015-1) is valuable, but relies on creating 'pseudo-bulk' mRNA-seq samples and then comparing predictions made using the single cell data that created the pseudo-bulk data.
 
-I would like to know how deconvolution methods perform when single cell and bulk libraries are prepared independently, and if choice of single cell technologies impacts the results. I hope that by looking over this workflow you will get a sense for how I approach problems and if I might be a good fit for your organization. If you would rather get straight to the Python and R, please checkout this [Python](./code/scRNA_stuff/code.py) and this [R](./code/scRNA_stuff/code.R) code.
+I would like to know how deconvolution methods perform when single cell and bulk libraries are prepared independently, and if choice of single cell technologies impacts the results. I hope that by looking over this workflow you will get a sense for how I approach problems and if I might be a good fit for your organization. If you would rather get straight to the Python and R, please checkout this [Python](./code/python_stuff/python_cmd_tools.ipynb) and this [R](./code/R_stuff/run_deconvolution.R) code.
 
 # Table of Contents
 **[Welcome!](#qiagen-logo)**<br>
@@ -21,7 +21,7 @@ Data corresponding to these lines is available on NCBI's [Short Read Archive](ht
 # Preparation
 
 ## System requirements
-This pipeline requires the workflow language [NextFlow](https://www.nextflow.io/) and the containerization tool [Docker](https://www.docker.com/) to run. I won't provide installation instructions since each tools has extensive documentation
+This pipeline requires the workflow language [NextFlow](https://www.nextflow.io/) and the containerization tool [Docker](https://www.docker.com/) to run. I won't provide installation instructions since each tools has extensive documentation. <br>
 
 ## Docker Images
 Most of this pipeline's Docker images are available on [Docker Hub](https://hub.docker.com/). However, I placed the Python environment and deconvolution tools in the same Docker image, which will need to be built. <br>
@@ -30,7 +30,6 @@ This image can be built by running the following code from this directory:
 #docker build ./code/docker_stuff/Docker
 bash ./build_image.bash
 ```
-Also, you might choose to download the pipeline's docker images a
 
 ## Environmental Variables
 The NextFlow workflow needs it user to supply three file paths corresponding to directories on you local system:
@@ -53,10 +52,46 @@ nextflow run nf-core/fetchngs \
     --force_sratools_download \ # I find this setting more reliable than the default FTP approach
     --outdir $outputDir 
 ```
-## pre-process the scRNA-seq data
 
+## Create cell type mixtures, and....
 
 ## pre-process the bulk mRNA-seq data
+```
+nextflow run nf-core/rnaseq \
+    --input ./bulk_samplesheet.csv \
+    --outdir $MAQC_DATA \
+    --save_merged_fastq true \
+    --with_umi false \
+    --skip_bbsplit true \
+    --max_memory 40.GB \
+    --max_cpus 8 \
+    --skip_bbsplit true \
+    --genome GRCh38 \
+    --save_align_intermeds true \
+    --skip_preseq true \
+    -profile docker
+
+#nextflow run nf-core/rnaseq --input ./bulkRNA_samplesheet.csv --outdir $MAQC_DATA --genome GRCh38 -profile docker
+# this one worked!
+nextflow run nf-core/rnaseq     --input ./bulk_samplesheet.csv     --outdir $MAQC_DATA     --save_merged_fastq true     --with_umi false     --skip_bbsplit true     --max_memory 80.GB     --max_cpus 8     --skip_bbsplit true     --genome GRCh38     --save_align_intermeds true     --skip_preseq true     -profile docker --skip_rseqc -resume
+pensive_hawking
+```
+
+## Process the scRNA-seq data
+```
+nextflow run nf-core/scrnaseq \
+    -profile docker \
+    --outdir ${MAQC_DATA}/scRNA \
+    --input ./scRNA_samplesheet.csv \
+    --aligner star \
+    --genome GRCh38 \
+    --max_memory 80GB \
+    --max_cpus 8 \
+    --protocol 10XV2
+
+```
+
+
 
 
 ## create test cases, and evaluate the deconvolution approaches
