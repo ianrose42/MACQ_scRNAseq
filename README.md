@@ -26,10 +26,6 @@ This pipeline requires the workflow language [NextFlow](https://www.nextflow.io/
 ## Docker Images
 Most of this pipeline's Docker images are available on [Docker Hub](https://hub.docker.com/). However, I placed the Python environment and deconvolution tools in the same Docker image, which will need to be built. <br>
 This image can be built by running the following code from this directory:
-```
-#docker build ./code/docker_stuff/Docker
-bash ./build_image.bash
-```
 
 ## Environmental Variables
 The NextFlow workflow needs it user to supply three file paths corresponding to directories on you local system:
@@ -37,13 +33,10 @@ The NextFlow workflow needs it user to supply three file paths corresponding to 
 - `outputDir` - the directory where results will written to
 - `workDir` - the directory where temporary files will be written
 
-I have chosen ... to do this all with the env vars NextFlow recognizes, so maybe re-write this section...
-
 # Usage Instructions
-The pipeline has three steps, diabramed below:
 
-... add a chart ...
 To perform each step, you can use the following code.
+
 ## Download the desired files and their metadata
 ```
 nextflow run nf-core/fetchngs \
@@ -53,7 +46,11 @@ nextflow run nf-core/fetchngs \
     --outdir $outputDir 
 ```
 
-## Create cell type mixtures, and....
+## Create cell type mixture samples
+```
+# needs a docker container with compatible dir structure 
+jupyter nbconvert --execute ./code/python_stuff/create_convolution.ipynb
+```
 
 ## pre-process the bulk mRNA-seq data
 ```
@@ -63,18 +60,14 @@ nextflow run nf-core/rnaseq \
     --save_merged_fastq true \
     --with_umi false \
     --skip_bbsplit true \
-    --max_memory 40.GB \
+    --max_memory 80.GB \
     --max_cpus 8 \
     --skip_bbsplit true \
     --genome GRCh38 \
     --save_align_intermeds true \
     --skip_preseq true \
-    -profile docker
-
-#nextflow run nf-core/rnaseq --input ./bulkRNA_samplesheet.csv --outdir $MAQC_DATA --genome GRCh38 -profile docker
-# this one worked!
-nextflow run nf-core/rnaseq     --input ./bulk_samplesheet.csv     --outdir $MAQC_DATA     --save_merged_fastq true     --with_umi false     --skip_bbsplit true     --max_memory 80.GB     --max_cpus 8     --skip_bbsplit true     --genome GRCh38     --save_align_intermeds true     --skip_preseq true     -profile docker --skip_rseqc -resume
-pensive_hawking
+    -profile docker \
+    --skip_rseqc
 ```
 
 ## Process the scRNA-seq data
@@ -90,12 +83,6 @@ nextflow run nf-core/scrnaseq \
     --protocol 10XV2
 
 ```
-
-
-
-
-## create test cases, and evaluate the deconvolution approaches
-
 
 # Summary/Results
 You can have a look at the summary report this pipeline generates by opening [example_report.html](./example_report.html)
