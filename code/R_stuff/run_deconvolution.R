@@ -8,6 +8,8 @@ library(Seurat)
 library(SingleR)
 library(SingleCellExperiment)
 library(DWLS)
+library(bseqsc)
+library(Biobase)
 library(optparse)
 
 # specify script inputs
@@ -18,7 +20,7 @@ option_list = list(
               help="path to scRNA-seq data to infer cell types", metavar="character"),
     make_option(c("-n", "--n_threads"), type="character", default='4', 
               help="number of threads to use", metavar="character"),
-	make_option(c("-o", "--out"), type="character", default="out.txt", 
+	make_option(c("-o", "--out"), type="character", default=NULL, 
               help="output file name [default= %default]", metavar="character")
 ); 
 
@@ -43,4 +45,8 @@ scrna <- SingleCellExperiment(scrna)
 bis_res <- BisqueRNA::ReferenceBasedDecomposition(bulk, scrna, scrna$markers)
 
 # get deconvSeq results
-dec_res <- 
+bsq_res <- B <- bseqsc_basis(bulk, scrna$markers, clusters = 'cell_type', samples = 'sample', ct.scale = TRUE)
+
+# save for later visualization
+save.image(file = opt$out)
+ 
