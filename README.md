@@ -83,10 +83,7 @@ nextflow run nf-core/scrnaseq \
     --protocol 10XV2
 
 ```
-
-# Summary/Results
-You can have a look at the summary report this pipeline generates by opening [example_report.html](./example_report.html)
-
-# To-Do
-- shrink the QIAGEN logo
-- add a License that makes sense
+## Run the deconvolution test
+```
+jupyter nbconvert --execute ./code/python_stuff/scRNA_analysis.ipynb
+```
