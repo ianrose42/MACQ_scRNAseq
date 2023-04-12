@@ -23,10 +23,6 @@ Data corresponding to these lines is available on NCBI's [Short Read Archive](ht
 ## System requirements
 This pipeline requires the workflow language [NextFlow](https://www.nextflow.io/) and the containerization tool [Docker](https://www.docker.com/) to run. I won't provide installation instructions since each tools has extensive documentation. <br>
 
-## Docker Images
-Most of this pipeline's Docker images are available on [Docker Hub](https://hub.docker.com/). However, I placed the Python environment and deconvolution tools in the same Docker image, which will need to be built. <br>
-This image can be built by running the following code from this directory:
-
 ## Environmental Variables
 The NextFlow workflow needs it user to supply three file paths corresponding to directories on you local system:
 - `fastqDir` - the directory where the raw files are to be downloaded to
